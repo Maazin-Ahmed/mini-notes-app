@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+</head>
+<body>
+    <h1>Simple Notes App</h1>
+    <textarea id="noteInput"></textarea>
+    <button onclick="addNote()">Add Note</button>
+    <h2>Notes:</h2>
+    <ul id="notesList"></ul>
+
+    <script>
+        async function addNote() {
+            const text = document.getElementById("noteInput").value;
+            const res = await fetch("http://localhost:5000/add-note", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text }),
+            });
+            const newNote = await res.json();
+            showNotes();
+        }
+
+        async function showNotes() {
+            const res = await fetch("http://localhost:5000/notes");
+            const notes = await res.json();
+            document.getElementById("notesList").innerHTML = notes.map(n => `<li>${n.text}</li>`).join("");
+        }
+
+        showNotes();
+    </script>
+</body>
+</html>
